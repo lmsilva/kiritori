@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "name": "Kiritori stand-in",
+  "match": { "exe": "kiritori-standin.exe", "windowClass": "KiritoriStandIn", "titleContains": "" },
+  "autoApply": "auto",
+  "keepWhenUnfocused": false,
+  "removeFrame": "auto",
+  "defaultLayout": "single-screen",
+  "layouts": [
+    {
+      "id": "single-screen",
+      "name": "Single screen",
+      "sourceAspect": [16, 9],
+      "displays": { "main": { "hardwareId": "", "label": "Display 1", "mode": "takeover" } },
+      "cutouts": [
+        { "number": 1, "name": "Main view", "color": "cyan",
+          "rects": [ { "op": "add", "x": 0.5, "y": 0, "w": 0.5, "h": 0.5 } ],
+          "placement": { "display": "main", "x": 0.125, "y": 0, "w": 0.75, "h": 0.75, "visible": true, "locked": false, "z": 1, "filter": "auto" } },
+        { "number": 2, "name": "Controls", "color": "amber",
+          "rects": [ { "op": "add", "x": 0.50625, "y": 0.51111, "w": 0.48828, "h": 0.34722 } ],
+          "placement": { "display": "main", "x": 0.32422, "y": 0.75, "w": 0.35156, "h": 0.25, "visible": true, "locked": false, "z": 2, "filter": "auto" } },
+        { "number": 3, "name": "Graph", "color": "magenta",
+          "rects": [ { "op": "add", "x": 0, "y": 0, "w": 0.5, "h": 0.5 } ],
+          "placement": { "display": "main", "x": 0, "y": 0, "w": 0.5, "h": 0.5, "visible": false, "locked": false, "z": 3, "filter": "auto" } },
+        { "number": 4, "name": "Score", "color": "lime",
+          "rects": [ { "op": "add", "x": 0, "y": 0.5, "w": 0.5, "h": 0.5 } ],
+          "placement": { "display": "main", "x": 0, "y": 0.5, "w": 0.5, "h": 0.5, "visible": false, "locked": false, "z": 4, "filter": "auto" } }
+      ]
+    }
+  ]
+}

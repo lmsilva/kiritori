@@ -1,0 +1,3 @@
+[workspace]
+resolver = "3"
+members = ["app", "tools/standin", "tools/gifmaker", "tools/latency"]

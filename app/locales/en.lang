@@ -1,0 +1,44 @@
+# Kiritori's English text. One "key = text" per line; "#" starts a comment.
+# To translate Kiritori, copy this file to <language>.lang (for example ja.lang), translate the
+# text after each "=", and keep the keys. Missing keys fall back to English.
+# Shortcuts shown after a tab ("\t") are written by Kiritori from the Settings and need no
+# translation.
+
+# Tray menu
+tray.not_saving = Not saving: the Kiritori folder is read-only
+tray.open_layer = Open Kiritori layer
+tray.close_layer = Close Kiritori layer
+tray.pick = Pick a window…
+tray.no_app = No app active
+tray.layouts = Layouts
+tray.show_original = Show original
+tray.profiles = Profiles…
+tray.shortcuts = Shortcuts…
+tray.settings = Settings…
+tray.tutorial = Tutorial
+tray.about = About Kiritori…
+tray.start_with_windows = Start with Windows
+tray.quit = Quit Kiritori
+
+# Toolbar
+tool.cut = Cut
+tool.arrange = Arrange
+tool.undo = Undo
+tool.redo = Redo
+tool.reset = Reset…
+tool.retake = Retake
+tool.grids = Grids ▾
+tool.suggest = Suggest
+tool.trim = Trim
+tool.hide = Hide
+tool.show = Show
+tool.delete = Delete
+tool.snap = Snap
+tool.list = List
+tool.fill = Fill
+tool.restore = Restore
+tool.auto_arrange = Auto-arrange
+tool.reset_placement = Reset placement
+tool.live = Live
+tool.edit = Edit
+tool.close = Close

@@ -1,0 +1,4 @@
+// Windows resources for kiritori.exe, compiled by build.rs.
+// The icon is the tray icon in its active state on a dark tile; see app_icon_rgba in
+// src/shell/icon.rs, which also keeps the file up to date.
+1 ICON "assets/kiritori.ico"

@@ -1,0 +1,11 @@
+[package]
+name = "kiritori-gifmaker"
+version = "0.1.0"
+edition = "2024"
+description = "Development tool: turns numbered PNG frames into the README's animated GIF."
+license = "MIT"
+publish = false
+
+[dependencies]
+image = { version = "0.25.10", default-features = false, features = ["png"] }
+gif = "0.14.2"
