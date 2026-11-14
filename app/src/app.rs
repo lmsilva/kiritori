@@ -16,6 +16,9 @@ use crate::shell::icon::TrayState;
 use crate::shell::system::{self, SavedFrame};
 use crate::store::{Settings, Store, StoredProfile};
 
+/// A send waiting for a display's mode: (cutout, display, drop point as display fractions).
+pub type PendingSend = (u32, usize, Option<(f64, f64)>);
+
 #[derive(Clone, Debug)]
 pub struct AppWindow {
     pub hwnd: isize,
@@ -102,7 +105,7 @@ pub struct App {
     /// A cutout being dragged over another display: that display and the pointer on it.
     pub drag_over: Option<(usize, (f32, f32))>,
     /// A send waiting for the user to choose Takeover or Float for a display not in use.
-    pub pending_send: Option<(u32, usize, Option<(f64, f64)>)>,
+    pub pending_send: Option<PendingSend>,
     /// The parked-cutouts toast was shown for this layout and these missing displays.
     parked_note: Option<(String, Vec<String>)>,
     /// An effect from a menu, for the shell to carry out on its next redraw.
@@ -417,12 +420,10 @@ impl App {
         let stored = aw as f64 / ah.max(1) as f64;
         let now = w as f64 / h as f64;
         let id = l.id.clone();
-        if (stored - now).abs() / stored > 0.01 {
-            if self.shape_note.as_ref().is_none_or(|(i, sw, sh)| *i != id || *sw != w || *sh != h) {
-                log!("source shape changed: layout made at {aw}:{ah}, the app is now {w}×{h}");
-                self.toast = Some(("Source shape changed — check your cutouts".into(), Instant::now()));
-                self.shape_note = Some((id, w, h));
-            }
+        if (stored - now).abs() / stored > 0.01 && self.shape_note.as_ref().is_none_or(|(i, sw, sh)| *i != id || *sw != w || *sh != h) {
+            log!("source shape changed: layout made at {aw}:{ah}, the app is now {w}×{h}");
+            self.toast = Some(("Source shape changed — check your cutouts".into(), Instant::now()));
+            self.shape_note = Some((id, w, h));
         }
     }
 

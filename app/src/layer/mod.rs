@@ -1,8 +1,12 @@
 //! The Kiritori layer: the editing overlay opened with Ctrl+Alt+K.
 //!
-//! Cut view lives here and Arrange view in `arrange`. The layer keeps only editing state (selection, the drag in
-//! progress, the name being typed); every change goes straight into the layout, and the caller
-//! records it as an undoable step and saves.
+//! Cut view lives here and Arrange view in `arrange`. The layer keeps only editing state
+//! (selection, the drag in progress, the name being typed); every change goes straight into the
+//! layout, and the caller records it as an undoable step and saves.
+
+/// A rectangle being drawn in Cut view: the shape operation (None for a new cutout) and its two
+/// corners in source fractions.
+pub type DrawingRect = (Option<ShapeOp>, (f64, f64), (f64, f64));
 
 pub mod arrange;
 pub mod chrome;
@@ -354,7 +358,7 @@ impl Layer {
         self.message.as_ref().filter(|(_, t)| t.elapsed() < Duration::from_secs(4)).map(|(m, _)| m.as_str())
     }
 
-    pub fn drawing_rect(&self) -> Option<(Option<ShapeOp>, (f64, f64), (f64, f64))> {
+    pub fn drawing_rect(&self) -> Option<DrawingRect> {
         match &self.drag {
             Some(Drag::Draw { op, start, now }) => Some((*op, *start, *now)),
             _ => None,
@@ -582,7 +586,7 @@ impl Layer {
     /// right on it, so a drag that starts just outside a corner draws a new cutout instead
     /// (neighbouring quadrants share corners).
     fn handle_at(&self, x: f32, y: f32, layout: &Layout, geo: &Geo) -> Option<usize> {
-        let Some(c) = self.selected.and_then(|n| layout.cutout(n)) else { return None };
+        let c = self.selected.and_then(|n| layout.cutout(n))?;
         let (bx, by, bw, bh) = geo.to_canvas(c.bounds());
         let inside = x >= bx && x <= bx + bw && y >= by && y <= by + bh;
         let reach = if inside { 9.0 } else { 4.0 } * geo.scale;

@@ -80,46 +80,6 @@ struct State {
 
 static STATE: Mutex<Option<State>> = Mutex::new(None);
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::model::geometry::Rect;
-    use crate::model::layout::{ShapeOp, ShapeRect};
-
-    fn map(dst: (f64, f64, f64, f64), shape: Vec<ShapeRect>) -> Map {
-        Map { dst, src: (1000.0, 0.0, 500.0, 500.0), bounds: Rect::new(0.5, 0.0, 0.5, 0.5), shape, orient: 0 }
-    }
-
-    #[test]
-    fn points_map_back_and_holes_are_empty() {
-        let plain = map((0.0, 0.0, 1000.0, 1000.0), vec![ShapeRect { op: ShapeOp::Add, rect: Rect::new(0.5, 0.0, 0.5, 0.5) }]);
-        let (p, hit) = translate(std::slice::from_ref(&plain), (500.0, 250.0));
-        assert_eq!((p.x, p.y, hit), (1250, 125, Some(0)));
-        assert_eq!(translate(std::slice::from_ref(&plain), (1500.0, 10.0)).1, None);
-        // A ring: the middle quarter of the cutout is cut away.
-        let ring = map(
-            (0.0, 0.0, 1000.0, 1000.0),
-            vec![ShapeRect { op: ShapeOp::Add, rect: Rect::new(0.5, 0.0, 0.5, 0.5) }, ShapeRect { op: ShapeOp::Subtract, rect: Rect::new(0.625, 0.125, 0.25, 0.25) }],
-        );
-        assert!(ring.hit((100.0, 100.0)));
-        assert!(!ring.hit((500.0, 500.0)), "the hole is empty area");
-        // The topmost of two overlapping cutouts wins.
-        let top = map((400.0, 400.0, 200.0, 200.0), vec![ShapeRect { op: ShapeOp::Add, rect: Rect::new(0.5, 0.0, 0.5, 0.5) }]);
-        assert_eq!(translate(&[plain.clone(), top], (500.0, 500.0)).1, Some(1));
-        // Turned a quarter clockwise: the top-right corner of the placement is the top-left of
-        // the source region.
-        let turned = Map { orient: 1, ..plain.clone() };
-        let p = turned.to_source((999.0, 0.0));
-        assert_eq!((p.x, p.y), (1000, 0));
-        // Mirrored: left and right swap.
-        let mirrored = Map { orient: 4, ..plain.clone() };
-        assert_eq!(mirrored.to_source((0.0, 0.0)).x, 1499);
-        // Clamped at the edge for a drag bound to a cutout.
-        let p = plain.to_source((5000.0, -50.0));
-        assert!(p.x <= 1499 && p.y >= 0);
-    }
-}
-
 fn with<R>(f: impl FnOnce(&mut State) -> R) -> R {
     let mut g = STATE.lock().unwrap();
     f(g.get_or_insert_with(State::default))
@@ -414,5 +374,45 @@ pub fn release() {
             let _ = MagShowSystemCursor(true);
             let _ = MagUninitialize();
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::model::geometry::Rect;
+    use crate::model::layout::{ShapeOp, ShapeRect};
+
+    fn map(dst: (f64, f64, f64, f64), shape: Vec<ShapeRect>) -> Map {
+        Map { dst, src: (1000.0, 0.0, 500.0, 500.0), bounds: Rect::new(0.5, 0.0, 0.5, 0.5), shape, orient: 0 }
+    }
+
+    #[test]
+    fn points_map_back_and_holes_are_empty() {
+        let plain = map((0.0, 0.0, 1000.0, 1000.0), vec![ShapeRect { op: ShapeOp::Add, rect: Rect::new(0.5, 0.0, 0.5, 0.5) }]);
+        let (p, hit) = translate(std::slice::from_ref(&plain), (500.0, 250.0));
+        assert_eq!((p.x, p.y, hit), (1250, 125, Some(0)));
+        assert_eq!(translate(std::slice::from_ref(&plain), (1500.0, 10.0)).1, None);
+        // A ring: the middle quarter of the cutout is cut away.
+        let ring = map(
+            (0.0, 0.0, 1000.0, 1000.0),
+            vec![ShapeRect { op: ShapeOp::Add, rect: Rect::new(0.5, 0.0, 0.5, 0.5) }, ShapeRect { op: ShapeOp::Subtract, rect: Rect::new(0.625, 0.125, 0.25, 0.25) }],
+        );
+        assert!(ring.hit((100.0, 100.0)));
+        assert!(!ring.hit((500.0, 500.0)), "the hole is empty area");
+        // The topmost of two overlapping cutouts wins.
+        let top = map((400.0, 400.0, 200.0, 200.0), vec![ShapeRect { op: ShapeOp::Add, rect: Rect::new(0.5, 0.0, 0.5, 0.5) }]);
+        assert_eq!(translate(&[plain.clone(), top], (500.0, 500.0)).1, Some(1));
+        // Turned a quarter clockwise: the top-right corner of the placement is the top-left of
+        // the source region.
+        let turned = Map { orient: 1, ..plain.clone() };
+        let p = turned.to_source((999.0, 0.0));
+        assert_eq!((p.x, p.y), (1000, 0));
+        // Mirrored: left and right swap.
+        let mirrored = Map { orient: 4, ..plain.clone() };
+        assert_eq!(mirrored.to_source((0.0, 0.0)).x, 1499);
+        // Clamped at the edge for a drag bound to a cutout.
+        let p = plain.to_source((5000.0, -50.0));
+        assert!(p.x <= 1499 && p.y >= 0);
     }
 }

@@ -654,6 +654,7 @@ impl ProfilesPanel {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn text_button(&mut self, d: &mut Vec<Draw>, r: Px, text: &str, icon: Option<&'static str>, hit: Hit, k: f32, color: Rgba) {
         let s = |v: f32| v * k;
         self.button_bg(d, r, &hit, s(8.0));

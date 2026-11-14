@@ -311,6 +311,7 @@ impl SettingsPanel {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn checkbox(&mut self, d: &mut Vec<Draw>, at: (f32, f32), row_h: f32, on: bool, text: &str, hit: Hit, k: f32) {
         let s = |x: f32| x * k;
         let cb = (at.0, at.1 + (row_h - s(20.0)) / 2.0, s(20.0), s(20.0));
